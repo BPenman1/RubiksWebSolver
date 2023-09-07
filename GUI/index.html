@@ -1,0 +1,460 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>Rubik's Cube Solver</title>
+    <link rel="shortcut icon" type="image/jpg" href="rubiks.ico" />
+    <style>
+        html {
+            background-color: #2f5c8a;
+        }
+
+        h1 {
+            font-family: "Gill Sans", "Gill Sans MT", "Myriad Pro", "DejaVu Sans Condensed", Helvetica, Arial, "sans-serif";
+            text-align: center;
+            color: white;
+            font-size: 4em;
+        }
+
+        /*style for the white box where the content goes*/
+        .grid {
+            display: block;
+            background-color: navajowhite;
+            padding: 4em;
+            width: 70%;
+            margin-left: auto;
+            margin-right: auto;
+            border-style: groove;
+        }
+
+        /*style for individul boxes inside each 'face'*/
+        td {
+            height: 50px;
+            width: 50px;
+            outline: 1px gray solid;
+        }
+
+            td:hover {
+                outline: 1px black solid;
+            }
+
+            td:active {
+                outline: 2px black solid;
+            }
+
+        /*top face style and alignment*/
+        .topFace {
+            margin-bottom: 0.3em;
+            padding-left: 168px;
+        }
+
+        /*left face style and alignment*/
+        .leftFace {
+            display:;
+            margin: 0;
+            padding: 0;
+        }
+
+            .leftFace td {
+            }
+
+        /*middle face style and alignment*/
+        .middleFace {
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+            .middleFace td {
+            }
+
+        /*right face style and alignment*/
+        .rightFace {
+        }
+
+            .rightFace td {
+            }
+
+
+        /*far right face style and alignment*/
+        .farrightFace {
+        }
+
+            .farrightFace td {
+            }
+
+        /*getting the four faces in a line*/
+        .leftFace,
+        .middleFace,
+        .rightFace,
+        .farrightFace {
+            padding: 0em;
+            display: inline-block;
+            margin-left: auto;
+            margin-right: auto;
+            align-content: center;
+        }
+
+        /*bottom face style and alignment*/
+        .bottomFace {
+            padding-left: 168px;
+        }
+
+            .bottomFace td {
+            }
+
+        /*solve button style*/
+
+        select {
+            padding: 1em;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            border-style: groove;
+            margin-bottom: 2em
+        }
+
+        h2 {
+            color: gray;
+            font-size: 1.5em;
+            font-family: 'Gill Sans', 'Gill Sans MT', 'Myriad Pro', 'DejaVu Sans Condensed', Helvetica, Arial, 'sans-serif';
+            text-align: center;
+        }
+
+        #solve, #erase {
+            color: white;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 2em;
+            width: 55%;
+            font-size: 1.2em;
+            background-color: gray;
+            padding: 0.6em;
+            border-radius: 2em;
+            border-style: none;
+            background-color: gray;
+        }
+
+            #solve:hover {
+                background-color: #5c5c5c;
+            }
+
+            #solve:active {
+                background-color: #333333;
+            }
+
+
+
+
+        /* Extra small devices (phones, 600px and down) */
+        @media only screen and (max-width: 600px) {
+
+
+            .grid {
+                padding: 1em;
+                display: block;
+                margin-left: auto;
+                margin-right: auto;
+                width: 90%;
+            }
+
+            td {
+                margin: 0;
+                padding: 0;
+                height: 29px;
+                width: 29px;
+                outline: 1px gray solid;
+            }
+
+            .topFace,
+            .bottomFace {
+                padding-left: 6.3em;
+            }
+        }
+
+        /* For tablets: */
+        @media only screen and (min-width: 600px) {
+
+
+            td {
+                height: 36px;
+                width: 36px;
+                outline: 1px gray solid;
+            }
+
+            .topFace,
+            .bottomFace {
+                padding-left: 7.9em;
+            }
+        }
+
+        /* Large devices (laptops/desktops, 992px and up) */
+        @media only screen and (min-width: 992px) {
+
+
+            td {
+                height: 50px;
+                width: 50px;
+                outline: 1px gray solid;
+            }
+
+            .topFace,
+            .bottomFace {
+                padding-left: 30.9em;
+            }
+
+            .cubeFaces {
+                display: block;
+                margin-left: auto;
+                margin-right: auto;
+                text-align: center;
+            }
+        }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script type="text/javascript" src="eel.js"></script>
+</head >
+
+                <body>
+                    <h1>Rubik's Cube Solver</h1>
+
+
+                    <div class="grid">
+                        <p style="color: gray; font-size: 1.5em; font-family:'Gill Sans', 'Gill Sans MT', 'Myriad Pro', 'DejaVu Sans Condensed', Helvetica, Arial, 'sans-serif'"><b>Directions:</b> Click on the square and fill in the square with the color on your cube. When you are ready, press 'solve' and your cube should be ready to solve using the formula!</p>
+
+                        <h2>Pick a Color</h2>
+                        <select id="colorPicker">
+                            <option id="W" value="white">White</option>
+                            <option id="G" value="green">Green</option>
+                            <option id="R" value="red">Red</option>
+                            <option id="B" value="blue">Blue</option>
+                            <option id="O" value="orange">Orange</option>
+                            <option id="Y" value="yellow">Yellow</option>
+                        </select>
+                        <!--faces of the rubiks cube-->
+                        <div class="cubeFaces">
+                            <table class="topFace">
+                                <tr>
+                                    <td id="0"></td>
+                                    <td id="1"></td>
+                                    <td id="2"></td>
+                                </tr>
+                                <tr>
+                                    <td id="3"></td>
+                                    <td id="4"></td>
+                                    <td id="5"></td>
+                                </tr>
+                                <tr>
+                                    <td id="6"></td>
+                                    <td id="7"></td>
+                                    <td id="8"></td>
+                                </tr>
+                            </table>
+
+                            <table class="leftFace">
+                                <tr>
+                                    <td id="9"></td>
+                                    <td id="10"></td>
+                                    <td id="11"></td>
+                                </tr>
+                                <tr>
+                                    <td id="21"></td>
+                                    <td id="22"></td>
+                                    <td id="23"></td>
+                                </tr>
+                                <tr>
+                                    <td id="33"></td>
+                                    <td id="34"></td>
+                                    <td id="35"></td>
+                                </tr>
+                            </table>
+
+                            <table class="middleFace">
+                                <tr>
+                                    <td id="12"></td>
+                                    <td id="13"></td>
+                                    <td id="14"></td>
+                                </tr>
+                                <tr>
+                                    <td id="24"></td>
+                                    <td id="25"></td>
+                                    <td id="26"></td>
+                                </tr>
+                                <tr>
+                                    <td id="36"></td>
+                                    <td id="37"></td>
+                                    <td id="38"></td>
+                                </tr>
+                            </table>
+
+                            <table class="rightFace">
+                                <tr>
+                                    <td id="15"></td>
+                                    <td id="16"></td>
+                                    <td id="17"></td>
+                                </tr>
+                                <tr>
+                                    <td id="27"></td>
+                                    <td id="28"></td>
+                                    <td id="29"></td>
+                                </tr>
+                                <tr>
+                                    <td id="39"></td>
+                                    <td id="40"></td>
+                                    <td id="41"></td>
+                                </tr>
+                            </table>
+
+                            <table class="farrightFace">
+                                <tr>
+                                    <td id="20"></td>
+                                    <td id="19"></td>
+                                    <td id="18"></td>
+                                </tr>
+                                <tr>
+                                    <td id="32"></td>
+                                    <td id="31"></td>
+                                    <td id="30"></td>
+                                </tr>
+                                <tr>
+                                    <td id="44"></td>
+                                    <td id="43"></td>
+                                    <td id="42"></td>
+                                </tr>
+                            </table>
+
+                            <table class="bottomFace">
+                                <tr>
+                                    <td id="45"></td>
+                                    <td id="46"></td>
+                                    <td id="47"></td>
+                                </tr>
+                                <tr>
+                                    <td id="48"></td>
+                                    <td id="49"></td>
+                                    <td id="50"></td>
+                                </tr>
+                                <tr>
+                                    <td id="51"></td>
+                                    <td id="52"></td>
+                                    <td id="53"></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="legend">
+                            <p>Below are some of the symbols and what they stand for. These will help you solve your cube. An 'i' measn to turn that face counterclockwise. These rules should be followed while you hold a face towards you. </p>
+                            <img src="RubiksLayers.png">
+                            <ul>
+                                <li>L: Left Clockwise</li>
+                                <li>Li: Left Counterclockwise</li>
+                                <li>R: Right Clokwise </li>
+                                <li>Ri: Right Counterclockwise</li>
+                                <li>U: Up Clockwise</li>
+                                <li>U: Up Counterclokwise</li>
+                                <li>D: Down Clockwise</li>
+                                <li>Di: Down Counterclockwise</li>
+                                <li>F: Front Clockwise</li>
+                                <li>Fi: Front CounterClockwise</li>
+                                <li>B: Back Clockwise</li>
+                                <li>Bi: Back Counterclockwise</li>
+                                <li>M: Clockwise</li>
+                                <li>Mi: Counterclockwise</li>
+                                <li>E: Clockwise</li>
+                                <li>Ei: Counterclockwise</li>
+                                <li>S: Clockwise</li>
+                                <li>Si: Counterclockwise</li>
+                                <li>X: Clockwise</li>
+                                <li>Xi: Counterclockwise</li>
+                                <li>Y: Clockwise</li>
+                                <li>Yi: Counterclockwise</li>
+                                <li>Z: Clockwise</li>
+                                <li>Zi: Counterclockwise</li>
+
+                            </ul>
+                        </div>
+
+                        <script>
+
+                            $(function () {
+                                $(document).ready(function () {
+
+
+                                    let array = [];
+                                    array.length = 54;
+
+
+                                    $('td').click(function addColor() {
+                                        color = $('#colorPicker').val();
+
+                                        if ($(this).attr('style')) {
+                                            $(this).removeAttr('style');
+                                        } else {
+                                            $(this).attr('style', 'background-color:' + color);
+                                            var pos = $(this).attr('id');
+                                            array[pos] = color;
+                                        }
+                                    });
+
+
+
+
+
+                                    $('#solve').click(function solve() {
+
+                                        for (var i = 0; i <= 54; i++) {
+
+                                            switch (array[i]) {
+
+                                                case 'white':
+                                                    array[i] = 'W';
+                                                    break;
+
+                                                case 'green':
+                                                    array[i] = 'G';
+                                                    break;
+
+                                                case 'red':
+                                                    array[i] = 'R';
+                                                    break;
+
+                                                case 'yellow':
+                                                    array[i] = 'Y'
+                                                    break;
+
+                                                case 'orange':
+                                                    array[i] = 'O'
+                                                    break;
+
+                                                case 'blue':
+                                                    array[i] = 'B'
+                                                    break;
+                                            }
+
+                                        }
+
+                                        var cube_string = array.join('');
+                                        console.log(cube_string);
+
+
+                                        
+                                        function print(n) {
+                                            var h2 = document.getElementById("output");
+                                            h2.innerHTML = n;
+                                        }
+
+                                        eel.input_cube(cube_string)(print);
+
+
+                                    });
+
+                                });
+                            });
+
+                        </script>
+                        <button id="erase">Erase!</button>
+                        <h2 id="output"></h2>
+                        <button id="solve">Solve!</button>
+                    </div>
+    </body>
+</html>
